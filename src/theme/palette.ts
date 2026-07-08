@@ -44,4 +44,11 @@ export const lightPalette: PaletteOptions = {
     },
     //Borders
     divider: '#E2E8F0',
+    //actions
+    action: {
+        hover: 'rgba(79,70,229,0.08)',
+        selected: 'rgba(79,70,229,0.12)',
+        disabled: '#94A3B8',
+        disabledBackground: '#E2E8F0',
+    },
 };
