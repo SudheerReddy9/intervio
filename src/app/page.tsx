@@ -24,6 +24,7 @@ export default function Home() {
         </Typography>
 
         <Button variant="contained" size="large">
+
           Get Started
         </Button>
       </Box>
