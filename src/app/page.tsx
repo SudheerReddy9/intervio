@@ -1,7 +1,9 @@
 'use client'
 import { Box, Button, Container, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
   return (
     <Container maxWidth="lg">
       <Box
@@ -23,7 +25,10 @@ export default function Home() {
           TypeScript and Material UI.
         </Typography>
 
-        <Button variant="contained" size="large">
+        <Button variant="contained" size="large"
+          onClick={() => router.push('/register')
+          }
+        >
 
           Get Started
         </Button>
