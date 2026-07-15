@@ -1,12 +1,13 @@
 'use client'
+import HomeClient from '@/components/HomeClient';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
   return (
-    <Container maxWidth="lg">
-      <Box
+    <Container >
+      {/* <Box
         sx={{
           py: 10,
           textAlign: 'center',
@@ -32,7 +33,8 @@ export default function Home() {
 
           Get Started
         </Button>
-      </Box>
+      </Box> */}
+      <HomeClient />
     </Container>
   );
 }
