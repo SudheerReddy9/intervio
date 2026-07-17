@@ -106,7 +106,7 @@ const LoginPage: React.FC = () => {
                     px: 1,
                     fontFamily: theme.typography.body2
                 }}>
-                    Don't have an account?
+                    Don `&apos;`t have an account?
                 </Typography>
                 <Button
                     onClick={() => router.push('/register')

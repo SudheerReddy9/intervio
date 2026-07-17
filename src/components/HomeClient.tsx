@@ -1,6 +1,5 @@
 import { theme } from "@/theme";
-import { Box, Button, Chip, Divider, IconButton, Typography } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import { IoPlayCircleOutline } from "react-icons/io5";
 
 export default function Home(): React.JSX.Element | null {
@@ -109,7 +108,7 @@ export default function Home(): React.JSX.Element | null {
                             borderRadius: "50%",
                             backgroundColor: theme.palette.error.main,
                             position: "relative",
-                            boxShadow: 'inherit'
+                            boxShadow: theme.shadows[3],
                         }}
                     >
 
