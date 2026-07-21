@@ -13,13 +13,8 @@ export default function Home(): React.JSX.Element | null {
                     xs: '1fr',
                     md: '1.1fr 0.9fr',
                 },
-                alignItems: 'center',
-                gap: 6,
-                px: {
-                    xs: 3,
-                    md: 8,
-                    lg: 12,
-                },
+                justifyContent: 'space-between',
+
                 py: {
                     xs: 8,
                     md: 10,
@@ -53,7 +48,11 @@ export default function Home(): React.JSX.Element | null {
                 </Box>
                 <Box>
                     <Typography variant="h1" color="primary.main"> Ace your next<br /> <span style={{ color: '#3182ce' }}>interview</span> with AI</Typography>
-                    <Typography sx={{ marginTop: '16px', fontSize: theme.typography.body1, color: theme.palette.text.secondary }}>Practice realistic mock interviews, get instant <br />feedback on every answer, and track your <br />progress with a coach that never gets tired of <br />you.</Typography>
+                    <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        sx={{ mt: 2 }}
+                    >Practice realistic mock interviews, get instant <br />feedback on every answer, and track your <br />progress with a coach that never gets tired of <br />you.</Typography>
                 </Box>
                 <Box
                     sx={{
@@ -84,10 +83,11 @@ export default function Home(): React.JSX.Element | null {
             </Box>
             <Box
                 sx={{
-                    borderRadius: 0,
-
-                    borderColor: 'green'
-
+                    p: 3,
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: '16px',
+                    bgcolor: 'background.paper',
+                    boxShadow: theme.shadows[2],
                 }}
             >
                 <Typography>Mock Interview</Typography>
@@ -98,7 +98,9 @@ export default function Home(): React.JSX.Element | null {
                     sx={{
                         display: 'flex',
                         flexDirection: 'row',
-                        gap: 2
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        paddingBottom: 2,
                     }}
                 >
                     <Box
@@ -114,20 +116,35 @@ export default function Home(): React.JSX.Element | null {
 
                     </Box>
                     <Typography>Recording...</Typography>
+                    <Typography>00:48</Typography>
                 </Box>
                 <Box
                     sx={{
-                        p: 3,
+                        p: '16px',
                         border: `1px solid ${theme.palette.divider}`,
-                        borderRadius: 3,
+                        borderRadius: '12px',
                         bgcolor: 'background.paper',
                         boxShadow: theme.shadows[3],
                     }}
                 >
-                    <Typography>AI FeedBack</Typography>
-                    <Typography>Clarity 91%</Typography>
-                    <Typography>Technical 86%</Typography>
-                    <Typography>Confidence 78%</Typography>
+
+                    <Typography variant="h6">
+                        AI Feedback
+                    </Typography>
+                    <Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography >Clarity</Typography>
+                            <Typography>90%</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography>Technical</Typography>
+                            <Typography>86%</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography>Confidence </Typography>
+                            <Typography>78%</Typography>
+                        </Box>
+                    </Box>
 
                 </Box>
             </Box>

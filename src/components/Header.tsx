@@ -3,23 +3,11 @@ import { AppBar, Box, Button, Toolbar, Typography, } from "@mui/material"
 import Image from 'next/image';
 import Link from 'next/link';
 const Header: React.FC = () => {
-    const navItems: Array<{
-        label: string;
-        href: string;
-    }> = [
-            {
-                label: 'Features',
-                href: '/projects',
-            },
-            {
-                label: 'Pricing',
-                href: '/experience',
-            },
-            {
-                label: 'About',
-                href: '/contact',
-            },
-        ];
+    const navItems = [
+        { label: 'Features', href: '#features' },
+        { label: 'Pricing', href: '#pricing' },
+        { label: 'About', href: '#about' },
+    ];
     return (
         <AppBar
             component='main'
