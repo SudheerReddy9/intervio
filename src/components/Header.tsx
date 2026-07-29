@@ -10,17 +10,23 @@ const Header: React.FC = () => {
     ];
     return (
         <AppBar
+            elevation={0}
             component='main'
-            position='sticky'
             sx={{
-                background: theme.palette.background.default
+                position: 'sticky',
+                bgcolor: 'background.paper',
+                borderBottom: `1px solid ${theme.palette.divider}`,
             }}
         >
             <Toolbar
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    px: 0.5,
+                    px: {
+                        xs: 2,
+                        md: 6,
+                        lg: 8,
+                    },
                 }}
             >
                 <Box
@@ -33,14 +39,24 @@ const Header: React.FC = () => {
                     }}
 
                 >
-                    <Link href='/' passHref>
-                        <Image
-                            src='/intervio_Logo.png'
-                            alt='Intervio Logo'
-                            width={50}
-                            height={50}
-
-                        />
+                    <Link
+                        href="/"
+                        style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Image
+                                src="/intervio_Logo.png"
+                                alt="Intervio Logo"
+                                width={50}
+                                height={50}
+                            />
+                            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                                Intervio
+                            </Typography>
+                        </Box>
                     </Link>
                 </Box>
                 <Box
@@ -63,12 +79,11 @@ const Header: React.FC = () => {
                                 }}
                             >
                                 <Typography
+                                    variant="button"
                                     sx={{
-                                        color: theme.palette.text.secondary,
-                                        fontFamily: theme.typography.button,
-                                        fontSize: theme.typography.h6,
-                                        p: '12px',
-                                        cursor: 'pointer',
+                                        color: 'text.secondary',
+                                        px: 2,
+                                        py: 1.5,
                                     }}
                                 >
                                     {item.label}

@@ -1,10 +1,10 @@
 'use client'
 import HomeClient from '@/components/HomeClient';
-import { Box, Button, Container, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import HowItWorks from '@/features/auth/components/HowItWorks';
+import SpeechRecorder from '@/features/speech/components/SpeechRecorder';
+import { Container } from '@mui/material';
 
 export default function Home() {
-  const router = useRouter();
   return (
     <Container >
       {/* <Box
@@ -35,6 +35,8 @@ export default function Home() {
         </Button>
       </Box> */}
       <HomeClient />
+      <HowItWorks />
+      <SpeechRecorder />
     </Container>
   );
 }

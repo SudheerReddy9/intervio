@@ -1,5 +1,5 @@
 import { theme } from "@/theme";
-import { Box, Button, Chip, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import { IoPlayCircleOutline } from "react-icons/io5";
 
 export default function Home(): React.JSX.Element | null {
