@@ -1,6 +1,7 @@
 import { Box, Button, IconButton, Paper, Typography } from "@mui/material"
 import MicIcon from "@mui/icons-material/Mic";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
+import { useState } from "react";
 
 const SpeechRecorder: React.FC = (
 
@@ -11,6 +12,28 @@ const SpeechRecorder: React.FC = (
         startListening,
         stopListening,
     } = useSpeechRecognition();
+    const [feedback, setFeedback] = useState('');
+    const evaluateAnswer = async () => {
+        if (!transcript.trim()) {
+            return;
+        }
+
+        const response = await fetch('/api/interview/evaluate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                answer: transcript,
+            }),
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+
+        setFeedback(data.answer);
+    };
     return (
 
         <Box
@@ -49,9 +72,26 @@ const SpeechRecorder: React.FC = (
                     {transcript || "Start speaking..."}
                 </Typography>
             </Paper>
-            <Button>
-                Evaluate
+            <Button
+                variant="contained"
+                onClick={evaluateAnswer}
+            >
+                Evaluate Answer
             </Button>
+            <Paper
+                sx={{
+                    mt: 3,
+                    p: 2,
+                }}
+            >
+                <Typography variant="h6">
+                    API Response
+                </Typography>
+
+                <Typography>
+                    {feedback}
+                </Typography>
+            </Paper>
         </Box>
     )
 }
