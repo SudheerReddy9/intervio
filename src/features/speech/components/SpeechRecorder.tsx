@@ -1,5 +1,6 @@
-import { Box, Button, IconButton, Paper, Typography } from "@mui/material"
+import { Box, Button, IconButton, InputAdornment, Paper, TextField, Typography } from "@mui/material"
 import MicIcon from "@mui/icons-material/Mic";
+import ClearIcon from "@mui/icons-material/Clear";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 import { useState } from "react";
 
@@ -11,6 +12,7 @@ const SpeechRecorder: React.FC = (
         transcript,
         startListening,
         stopListening,
+        clearTranscript,
     } = useSpeechRecognition();
     const [feedback, setFeedback] = useState('');
     const evaluateAnswer = async () => {
@@ -60,6 +62,29 @@ const SpeechRecorder: React.FC = (
             <Typography variant="h6">
                 {isListening ? "🎤 Listening..." : "Click the microphone to start"}
             </Typography>
+            <TextField
+                fullWidth
+                value={transcript}
+                multiline
+                minRows={8}
+                placeholder="Start Speaking..."
+                slotProps={{
+                    htmlInput: {
+                        readOnly: true,
+                    },
+                    input: {
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={clearTranscript}>
+                                    <ClearIcon />
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    },
+                }}
+            />
+
+
             <Paper
                 elevation={2}
                 sx={{
@@ -92,7 +117,7 @@ const SpeechRecorder: React.FC = (
                     {feedback}
                 </Typography>
             </Paper>
-        </Box>
+        </Box >
     )
 }
 export default SpeechRecorder;

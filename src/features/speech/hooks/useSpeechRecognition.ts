@@ -53,10 +53,14 @@ export function useSpeechRecognition() {
     const stopListening = useCallback(() => {
         recognitionRef.current?.stop();
     }, []);
+    const clearTranscript = () => {
+        setTranscript('');
+    };
     return {
         isListening,
         transcript,
         startListening,
         stopListening,
+        clearTranscript,
     };
 }
