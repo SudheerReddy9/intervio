@@ -47,21 +47,46 @@ const SpeechRecorder: React.FC = (
                 gap: 3,
             }}
         >
-            <IconButton
-                color={isListening ? "error" : "primary"}
-                onClick={() => {
-                    if (isListening) {
-                        stopListening();
-                    } else {
-                        startListening();
-                    }
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row'
                 }}
             >
-                <MicIcon />
-            </IconButton>
-            <Typography variant="h6">
-                {isListening ? "🎤 Listening..." : "Click the microphone to start"}
-            </Typography>
+
+
+                <IconButton
+                    color={isListening ? "error" : "primary"}
+                    onClick={() => {
+                        if (isListening) {
+                            stopListening();
+                        } else {
+                            startListening();
+                        }
+                    }}
+                >
+                    <MicIcon />
+                </IconButton>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography variant="h6">
+                        {isListening
+                            ? "🎤 Listening..."
+                            : "🎤 Click the microphone to start"}
+                    </Typography>
+
+                    {transcript && (
+                        <IconButton onClick={clearTranscript}>
+                            <ClearIcon />
+                        </IconButton>
+                    )}
+                </Box>
+            </Box>
             <TextField
                 fullWidth
                 value={transcript}
@@ -75,30 +100,16 @@ const SpeechRecorder: React.FC = (
                     input: {
                         endAdornment: (
                             <InputAdornment position="end">
-                                <IconButton onClick={clearTranscript}>
-                                    <ClearIcon />
-                                </IconButton>
+
                             </InputAdornment>
                         ),
                     },
                 }}
             />
 
-
-            <Paper
-                elevation={2}
-                sx={{
-                    minHeight: 200,
-                    p: 3,
-                    borderRadius: 2,
-                }}
-            >
-                <Typography>
-                    {transcript || "Start speaking..."}
-                </Typography>
-            </Paper>
             <Button
                 variant="contained"
+                disabled={!transcript.trim()}
                 onClick={evaluateAnswer}
             >
                 Evaluate Answer

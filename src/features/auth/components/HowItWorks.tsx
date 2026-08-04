@@ -69,10 +69,11 @@ export default function HowItWorks(): React.JSX.Element | null {
                             }}
                         >
                             <Typography
-                                variant="h2"
+                                variant="h1"
                                 component="div"
+
                                 color="primary.main"
-                                sx={{ fontWeight: 700 }}
+                                sx={{ fontWeight: 700, }}
                             >
                                 {s.number}
                             </Typography>
