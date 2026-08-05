@@ -7,6 +7,11 @@ import { useState } from "react";
 
 export default function InterviewPage() {
     const [currentQuestion, setCurrentQuestion] = useState(0);
+    const handleNextQuestion = () => {
+        if (currentQuestion < resumeQuestions.length - 1) {
+            setCurrentQuestion((previous) => previous + 1);
+        }
+    };
     return (
         <Container>
             <QuestionCard
@@ -23,11 +28,7 @@ export default function InterviewPage() {
                 }}
             >
                 <Button
-                    onClick={() => {
-                        if (currentQuestion < resumeQuestions.length - 1) {
-                            setCurrentQuestion(currentQuestion + 1);
-                        }
-                    }}
+                    onClick={handleNextQuestion}
                 >
                     Next Question
                 </Button>

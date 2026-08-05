@@ -55,9 +55,11 @@ export default function HowItWorks(): React.JSX.Element | null {
                     mt: 6,
                 }}
             >
-                {steps.map((s) => {
+                {steps.map((s, index) => {
                     return (
-                        <Box
+
+                        < Box
+                            key={index}
                             sx={{
                                 mx: 1,
                                 p: 3,
@@ -84,6 +86,6 @@ export default function HowItWorks(): React.JSX.Element | null {
                 })}
 
             </Box>
-        </Box>
+        </Box >
     )
 }

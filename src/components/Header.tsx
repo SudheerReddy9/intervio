@@ -11,7 +11,6 @@ const Header: React.FC = () => {
     return (
         <AppBar
             elevation={0}
-            component='main'
             sx={{
                 position: 'sticky',
                 bgcolor: 'background.paper',
