@@ -2,11 +2,14 @@ import { Box, Button, IconButton, InputAdornment, Paper, TextField, Typography }
 import MicIcon from "@mui/icons-material/Mic";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+interface SpeechRecorderProps {
+    onTranscriptChange: (transcript: string) => void;
+}
 
-const SpeechRecorder: React.FC = (
-
-) => {
+const SpeechRecorder: React.FC<SpeechRecorderProps> = ({
+    onTranscriptChange,
+}) => {
     const {
         isListening,
         transcript,
@@ -14,28 +17,9 @@ const SpeechRecorder: React.FC = (
         stopListening,
         clearTranscript,
     } = useSpeechRecognition();
-    const [feedback, setFeedback] = useState('');
-    const evaluateAnswer = async () => {
-        if (!transcript.trim()) {
-            return;
-        }
-
-        const response = await fetch('/api/interview/evaluate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                answer: transcript,
-            }),
-        });
-
-        const data = await response.json();
-
-        console.log(data);
-
-        setFeedback(data.answer);
-    };
+    useEffect(() => {
+        onTranscriptChange(transcript);
+    }, [transcript, onTranscriptChange]);
     return (
 
         <Box
@@ -106,28 +90,6 @@ const SpeechRecorder: React.FC = (
                     },
                 }}
             />
-
-            <Button
-                variant="contained"
-                disabled={!transcript.trim()}
-                onClick={evaluateAnswer}
-            >
-                Evaluate Answer
-            </Button>
-            <Paper
-                sx={{
-                    mt: 3,
-                    p: 2,
-                }}
-            >
-                <Typography variant="h6">
-                    API Response
-                </Typography>
-
-                <Typography>
-                    {feedback}
-                </Typography>
-            </Paper>
         </Box >
     )
 }

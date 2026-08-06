@@ -30,3 +30,12 @@ declare global {
         webkitSpeechRecognition?: SpeechRecognitionConstructor;
     }
 }
+export interface InterviewFeedback {
+    overallScore: number;
+    communication: number;
+    technicalKnowledge: number;
+    confidence: number;
+    strengths: string[];
+    improvements: string[];
+    overallFeedback: string;
+}
