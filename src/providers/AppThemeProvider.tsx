@@ -1,19 +1,17 @@
-'use client';
+"use client";
 
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { theme } from '@/theme';
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { theme } from "@/theme";
 
 interface AppThemeProviderProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-export default function AppThemeProvider({
-    children,
-}: AppThemeProviderProps) {
-    return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
-        </ThemeProvider>
-    );
+export default function AppThemeProvider({ children }: AppThemeProviderProps) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
 }

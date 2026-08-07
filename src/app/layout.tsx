@@ -1,19 +1,19 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 
-import './globals.css';
-import AppThemeProvider from '@/providers/AppThemeProvider';
-import Header from '@/components/Header';
+import "./globals.css";
+import AppThemeProvider from "@/providers/AppThemeProvider";
+import Header from "@/components/Header";
 
 const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: 'Intervio',
-  description: 'AI-powered interview preparation platform',
+  title: "Intervio",
+  description: "AI-powered interview preparation platform",
 };
 
 export default function RootLayout({
@@ -24,7 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-
         <AppThemeProvider>
           <Header />
           {children}

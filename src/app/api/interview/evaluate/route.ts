@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { ai } from "@/lib/gemini";
 
 export async function POST(request: Request) {
-    const { question, answer } = await request.json();
+  const { question, answer } = await request.json();
 
-    const prompt = `
+  const prompt = `
 You are a Senior Frontend Software Engineer conducting a technical interview.
 
 Evaluate the candidate's answer professionally.
@@ -37,46 +37,44 @@ Return ONLY valid JSON in this format:
   "overallFeedback": ""
 }
 `;
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-3.5-flash",
-            contents: prompt,
-        });
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: prompt,
+    });
 
-        const text = response.text;
+    const text = response.text;
 
-        if (!text) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Gemini did not return any response.",
-                },
-                { status: 500 }
-            );
-        }
-
-        const cleanedText = text
-            .replace(/```json/g, "")
-            .replace(/```/g, "")
-            .trim();
-
-        const feedback = JSON.parse(cleanedText);
-
-        return NextResponse.json({
-            success: true,
-            feedback,
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        return NextResponse.json(
-            {
-                success: false,
-                message: "Gemini is currently busy. Please try again.",
-            },
-            { status: 503 }
-        );
+    if (!text) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Gemini did not return any response.",
+        },
+        { status: 500 },
+      );
     }
 
+    const cleanedText = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const feedback = JSON.parse(cleanedText);
+
+    return NextResponse.json({
+      success: true,
+      feedback,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gemini is currently busy. Please try again.",
+      },
+      { status: 503 },
+    );
+  }
 }

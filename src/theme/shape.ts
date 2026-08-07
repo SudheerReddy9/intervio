@@ -1,5 +1,5 @@
-import { ShapeOptions } from '@mui/material/styles';
+import { ShapeOptions } from "@mui/material/styles";
 
 export const shape: ShapeOptions = {
-    borderRadius: '12px',
+  borderRadius: "12px",
 };
