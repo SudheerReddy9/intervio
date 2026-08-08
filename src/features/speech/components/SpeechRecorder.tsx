@@ -1,16 +1,14 @@
 import {
   Box,
-  Button,
   IconButton,
   InputAdornment,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import MicIcon from "@mui/icons-material/Mic";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 interface SpeechRecorderProps {
   onTranscriptChange: (transcript: string) => void;
 }

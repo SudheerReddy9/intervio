@@ -90,6 +90,7 @@ const Header: React.FC = () => {
           })}
         </Box>
         <Button
+          href="/login"
           sx={{
             p: 1,
             whiteSpace: "nowrap",
@@ -97,6 +98,7 @@ const Header: React.FC = () => {
             fontFamily: theme.typography.button,
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
+
           }}
         >
           Sign In

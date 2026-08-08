@@ -3,6 +3,17 @@ import { Box, Button, Divider, LinearProgress, Typography } from "@mui/material"
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import MicIcon from "@mui/icons-material/Mic";
 export default function Home(): React.JSX.Element | null {
+    const getScoreColor = (score: number) => {
+        if (score < 30) return "#EF4444";
+        if (score < 60) return "#F59E0B";
+        if (score < 80) return "#3B82F6";
+        return "#22C55E";
+    };
+    const demoFeedback = {
+        communication: 29,
+        technical: 46,
+        confidence: 78,
+    };
     return (
         <Box
             component="section"
@@ -98,6 +109,7 @@ export default function Home(): React.JSX.Element | null {
                     <Button
                         variant="contained"
                         size="large"
+                        href="/resume"
                         sx={{
                             px: 4,
                             py: 1.5,
@@ -212,18 +224,22 @@ export default function Home(): React.JSX.Element | null {
                     >
                         <Typography>Communication</Typography>
                         <Typography sx={{ fontWeight: 600 }}>
-                            90%
+                            {demoFeedback.communication}%
                         </Typography>
                     </Box>
 
                     <LinearProgress
-                        color="error"
                         variant="determinate"
-                        value={90}
+                        value={demoFeedback.communication}
                         sx={{
                             mt: 1,
                             borderRadius: 10,
                             height: 8,
+                            backgroundColor: "#E5E7EB",
+                            "& .MuiLinearProgress-bar": {
+                                backgroundColor: getScoreColor(demoFeedback.communication),
+                                borderRadius: 10,
+                            },
                         }}
                     />
                 </Box>
@@ -236,18 +252,22 @@ export default function Home(): React.JSX.Element | null {
                         }}
                     >
                         <Typography>Technical</Typography>
-                        <Typography sx={{ fontWeight: 600 }}>
-                            86%
-                        </Typography>
+                        <Typography sx={{ fontWeight: 600 }}>{demoFeedback.technical}%</Typography>
                     </Box>
 
                     <LinearProgress
+
+
                         variant="determinate"
-                        value={86}
+                        value={demoFeedback.technical}
                         sx={{
                             mt: 1,
                             borderRadius: 10,
                             height: 8,
+                            background: "#E5E7EB",
+                            "& .MuiLinearProgress-bar": {
+                                backgroundColor: getScoreColor(demoFeedback.technical),
+                            },
                         }}
                     />
                 </Box>
@@ -261,15 +281,18 @@ export default function Home(): React.JSX.Element | null {
                     >
                         <Typography>Confidence</Typography>
                         <Typography sx={{ fontWeight: 600 }}>
-                            78%
+                            {demoFeedback.confidence}%
                         </Typography>
                     </Box>
 
                     <LinearProgress
-                        color="success"
                         variant="determinate"
-                        value={78}
+                        value={demoFeedback.communication}
                         sx={{
+                            background: "#E5E7EB",
+                            "& .MuiLinearProgress-bar": {
+                                backgroundColor: getScoreColor(demoFeedback.confidence),
+                            },
                             mt: 1,
                             borderRadius: 10,
                             height: 8,
