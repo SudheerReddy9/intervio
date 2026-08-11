@@ -9,8 +9,9 @@ import {
     Typography,
 } from "@mui/material";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 const ResumeUpload = () => {
+    const router = useRouter();
     const [resume, setResume] = useState<File | null>(null);
     const [questions, setQuestions] = useState<
         { id: number; question: string; category: string }[]
@@ -43,8 +44,12 @@ const ResumeUpload = () => {
         console.log(data);
 
         if (data.success) {
-            setQuestions(data.questions);
-            setShowSuccess(true);
+            sessionStorage.setItem(
+                "interviewQuestions",
+                JSON.stringify(data.questions)
+            );
+
+            router.push("/questions");
         }
     }
     return (
