@@ -12,6 +12,9 @@ import { useState } from "react";
 
 const ResumeUpload = () => {
     const [resume, setResume] = useState<File | null>(null);
+    const [questions, setQuestions] = useState<
+        { id: number; question: string; category: string }[]
+    >([]);
     const [showSuccess, setShowSuccess] = useState(false);
     const handleFileChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -24,6 +27,25 @@ const ResumeUpload = () => {
             return;
         }
         setResume(file)
+    }
+    const handleUpload = async () => {
+        if (!resume) {
+            return
+        }
+        const formData = new FormData()
+        formData.append('resume', resume)
+        const response = await fetch('api/resume/upload', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        console.log(data);
+
+        if (data.success) {
+            setQuestions(data.questions);
+            setShowSuccess(true);
+        }
     }
     return (
         <Box
@@ -252,7 +274,7 @@ const ResumeUpload = () => {
                         variant="contained"
                         size="large"
                         disabled={!resume}
-                        onClick={() => setShowSuccess(true)}
+                        onClick={handleUpload}
                         sx={{
                             mt: 4,
                             py: 1.5,
@@ -263,6 +285,30 @@ const ResumeUpload = () => {
                         Continue
                     </Button>
                 </Box>
+                {questions.length > 0 && (
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="h5">
+                            Your Personalized Interview Questions
+                        </Typography>
+
+                        {questions.map((item, index) => (
+                            <Box
+                                key={item.id}
+                                sx={{
+                                    mt: 2,
+                                    p: 2,
+                                    borderRadius: 2,
+                                    bgcolor: "background.paper",
+                                    boxShadow: 2,
+                                }}
+                            >
+                                <Typography sx={{ fontWeight: 600 }}>
+                                    {index + 1}. {item.question}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                )}
             </Container>
             <Snackbar
                 open={showSuccess}
