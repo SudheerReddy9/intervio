@@ -103,7 +103,6 @@ Return ONLY valid JSON in this format:
             .trim();
 
         const result = JSON.parse(cleanedText);
-        console.log("Gemini response:", response.text);
 
         // const parser = new PDFParse({
         //     data: buffer,
