@@ -1,10 +1,5 @@
 import { InterviewFeedback } from "@/features/speech/types";
-import {
-  Box,
-  LinearProgress,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, LinearProgress, Paper, Typography } from "@mui/material";
 
 interface FeedbackCardProps {
   feedback: InterviewFeedback | null;
@@ -49,19 +44,13 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback }) => {
         borderRadius: 3,
       }}
     >
-      <Typography
-        variant="h5"
-        sx={{ fontWeight: 700 }}
-      >
+      <Typography variant="h5" sx={{ fontWeight: 700 }}>
         🤖 AI Feedback
       </Typography>
 
       <Box sx={{ mt: 3 }}>
         {scores.map((score) => (
-          <Box
-            key={score.label}
-            sx={{ mb: 3 }}
-          >
+          <Box key={score.label} sx={{ mb: 3 }}>
             <Box
               sx={{
                 display: "flex",
@@ -69,13 +58,9 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback }) => {
                 mb: 1,
               }}
             >
-              <Typography>
-                {score.label}
-              </Typography>
+              <Typography>{score.label}</Typography>
 
-              <Typography sx={{ fontWeight: 700 }}>
-                {score.value}%
-              </Typography>
+              <Typography sx={{ fontWeight: 700 }}>{score.value}%</Typography>
             </Box>
 
             <LinearProgress
@@ -88,8 +73,7 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback }) => {
 
                 "& .MuiLinearProgress-bar": {
                   borderRadius: 5,
-                  backgroundColor:
-                    getScoreColor(score.value),
+                  backgroundColor: getScoreColor(score.value),
                 },
               }}
             />

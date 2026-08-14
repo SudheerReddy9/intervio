@@ -98,7 +98,6 @@ const Header: React.FC = () => {
             fontFamily: theme.typography.button,
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
-
           }}
         >
           Sign In

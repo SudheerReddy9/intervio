@@ -1,7 +1,6 @@
 import {
   Box,
   IconButton,
-  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
@@ -80,12 +79,15 @@ const SpeechRecorder: React.FC<SpeechRecorderProps> = ({
         multiline
         minRows={8}
         placeholder="Start Speaking..."
+        sx={{
+          "& .MuiInputBase-input": {
+            fontFamily:
+              '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
+          },
+        }}
         slotProps={{
           htmlInput: {
             readOnly: true,
-          },
-          input: {
-            endAdornment: <InputAdornment position="end"></InputAdornment>,
           },
         }}
       />
