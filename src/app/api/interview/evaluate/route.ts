@@ -15,25 +15,51 @@ export async function POST(request: Request) {
   }
 
   const prompt = `
-You are a Senior Frontend Software Engineer evaluating a completed technical interview.
+You are an experienced technical interviewer evaluating a completed interview.
 
-Review the candidate's full interview performance.
+The candidate may come from any technical background, including frontend,
+backend, full stack, AI/ML, data science, DevOps, cloud, software engineering,
+or may be a student/fresher.
+
+Determine the candidate's technical domain and expected experience level
+from the interview questions and answers.
+
+Evaluate the candidate according to the role, technologies, projects,
+skills, and experience reflected in their interview.
+
+Do not assume the candidate is a frontend engineer.
 
 Interview Responses:
 ${JSON.stringify(answers, null, 2)}
 
-Evaluate the candidate across the entire interview based on:
+Evaluate the candidate's overall interview performance based on:
 
-1. Relevance of answers.
-2. Technical accuracy.
-3. Communication clarity.
-4. Confidence.
-5. Completeness.
-6. Consistency across answers.
+1. Relevance of answers
+2. Technical accuracy
+3. Communication clarity
+4. Confidence
+5. Completeness
+6. Consistency across answers
+7. Understanding of technologies and concepts relevant to their background
 
-Give constructive feedback based on the interview as a whole.
+Important:
+The candidate's answers were captured using speech-to-text.
 
-Return ONLY valid JSON in this format:
+Do not penalize the candidate for:
+- Minor speech-to-text transcription mistakes
+- Accent-related recognition errors
+- Missing punctuation
+- Small grammatical mistakes
+- Incorrectly transcribed words when the intended meaning is clear
+
+Focus primarily on the candidate's understanding, reasoning, technical
+knowledge, and ability to communicate their ideas.
+
+Give constructive and actionable feedback.
+
+All scores must be numbers from 0 to 100.
+
+Return ONLY valid JSON in this exact format:
 
 {
   "overallScore": 0,

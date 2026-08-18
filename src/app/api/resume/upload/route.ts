@@ -56,24 +56,38 @@ export async function POST(request: Request) {
         },
         {
           text: `
-You are a Senior Software Engineer conducting a technical interview.
+You are an experienced technical interviewer.
 
-Analyze the candidate's resume carefully.
+Analyze the candidate's resume and determine their primary professional
+role, technical domain, experience level, skills, and areas of expertise.
 
-Generate 8 interview questions based specifically on:
-- Their work experience
+Act as an interviewer appropriate for that candidate's background.
+
+For example:
+- Frontend candidate → Frontend interviewer
+- Backend candidate → Backend interviewer
+- AI/ML candidate → AI/ML interviewer
+- Data Science candidate → Data Science interviewer
+- DevOps candidate → DevOps/Cloud interviewer
+- Full Stack candidate → Full Stack interviewer
+- Student/Fresher → Entry-level interviewer
+
+Generate exactly 8 interview questions specifically based on the candidate's resume.
+
+Focus on:
+- Work experience
 - Projects
 - Technical skills
-- Technologies mentioned in the resume
-- Responsibilities and achievements
+- Technologies mentioned
+- Responsibilities
+- Achievements
+- Relevant fundamentals for their field
 
-Include a mix of:
-- Resume-based questions
-- Technical questions
-- Project deep-dive questions
-- Behavioral questions
+Do not ask questions about technologies or experience that are not
+supported by the resume.
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON in the required format.
+
 
 {
  "questions": [
