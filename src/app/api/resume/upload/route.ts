@@ -44,6 +44,7 @@ export async function POST(request: Request) {
 
     console.log("PDF Buffer:", buffer.length);
     console.log("Base64 length:", base64Pdf.length);
+    console.time('resume-ai')
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
       contents: [
@@ -75,9 +76,10 @@ Include a mix of:
 Return ONLY valid JSON in this format:
 
 {
-  "questions": [
+ "questions": [
     {
       "question": "",
+      "category": ""
     }
   ]
 }
@@ -85,6 +87,7 @@ Return ONLY valid JSON in this format:
         },
       ],
     });
+    console.timeEnd("resume-ai")
     const text = response.text;
 
     if (!text) {
@@ -103,32 +106,62 @@ Return ONLY valid JSON in this format:
       .trim();
 
     const result = JSON.parse(cleanedText);
+    const fixedQuestions = [
+      {
+        id: 1,
+        question: "Tell me about yourself and walk me through your experience.",
+        category: "Introduction",
+      },
+      {
+        id: 2,
+        question:
+          "What are your key strengths, and why do you think you're a good fit for this role?",
+        category: "Introduction",
+      },
+    ];
+    const resumeQuestions = result.questions.map(
+      (item: { question: string; category: string }, index: number) => ({
+        id: index + 3,
+        question: item.question,
+        category: item.category,
+      }),
+    );
 
-    // const parser = new PDFParse({
-    //     data: buffer,
-    // });
-
-    // const result = await parser.getText();
-
-    // await parser.destroy();
-
-    // console.log(result.text);
+    const questions = [
+      ...fixedQuestions,
+      ...resumeQuestions,
+    ];
 
     return NextResponse.json({
       success: true,
       message: "Interview questions generated successfully",
       fileName: resume.name,
-      questions: result.questions,
+      questions,
     });
-  } catch (error) {
-    console.error("Resume parsing error:", error);
+  }
+  catch (error: unknown) {
+    console.error("Resume processing error:", error);
+
+    if (
+      error instanceof Error &&
+      error.message.includes("503")
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "AI service is currently busy. Please try again in a moment.",
+        },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to process resume",
+        message: "Failed to process resume.",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

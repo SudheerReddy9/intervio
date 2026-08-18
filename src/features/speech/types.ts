@@ -13,7 +13,7 @@ export interface SpeechRecognition extends EventTarget {
 
   start(): void;
   stop(): void;
-
+  abort(): void;
   onstart: (() => void) | null;
   onend: (() => void) | null;
   onresult: ((event: SpeechRecognitionEvent) => void) | null;
@@ -21,7 +21,7 @@ export interface SpeechRecognition extends EventTarget {
 }
 
 export interface SpeechRecognitionConstructor {
-  new (): SpeechRecognition;
+  new(): SpeechRecognition;
 }
 
 declare global {

@@ -14,6 +14,7 @@ const ResumeUpload = () => {
   const router = useRouter();
   const [resume, setResume] = useState<File | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -24,27 +25,40 @@ const ResumeUpload = () => {
     }
     setResume(file);
   };
-  const handleUpload = async () => {
-    if (!resume) {
+  const handleUpload = async (
+    destination: "/interview" | "/questions"
+  ) => {
+    if (!resume || isLoading) {
       return;
     }
-    const formData = new FormData();
-    formData.append("resume", resume);
-    const response = await fetch("api/resume/upload", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await response.json();
+    setIsLoading(true)
+    try {
+      const formData = new FormData();
+      formData.append("resume", resume);
 
-    console.log(data);
+      const response = await fetch("/api/resume/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (data.success) {
-      sessionStorage.setItem(
-        "interviewQuestions",
-        JSON.stringify(data.questions),
-      );
+      const data = await response.json();
 
-      router.push("/questions");
+      if (data.success) {
+        sessionStorage.setItem(
+          "interviewQuestions",
+          JSON.stringify(data.questions)
+        );
+
+        router.push(destination);
+      } else {
+        console.error(data.message);
+      }
+    }
+    catch (error) {
+      console.error(error)
+    }
+    finally {
+      setIsLoading(false)
     }
   };
   return (
@@ -252,7 +266,7 @@ const ResumeUpload = () => {
             variant="contained"
             size="large"
             disabled={!resume}
-            onClick={() => router.push("/interview")}
+            onClick={() => handleUpload("/interview")}
             sx={{
               mt: 4,
               py: 1.5,
@@ -267,7 +281,7 @@ const ResumeUpload = () => {
             variant="contained"
             size="large"
             disabled={!resume}
-            onClick={handleUpload}
+            onClick={() => handleUpload("/questions")}
             sx={{
               mt: 4,
               py: 1.5,

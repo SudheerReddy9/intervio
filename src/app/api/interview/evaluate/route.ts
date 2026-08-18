@@ -2,28 +2,36 @@ import { NextResponse } from "next/server";
 import { ai } from "@/lib/gemini";
 
 export async function POST(request: Request) {
-  const { question, answer } = await request.json();
+  const { answers } = await request.json();
+
+  if (!Array.isArray(answers) || answers.length === 0) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Interview answers are required",
+      },
+      { status: 400 },
+    );
+  }
 
   const prompt = `
-You are a Senior Frontend Software Engineer conducting a technical interview.
+You are a Senior Frontend Software Engineer evaluating a completed technical interview.
 
-Evaluate the candidate's answer professionally.
+Review the candidate's full interview performance.
 
-Interview Question:
-${question}
+Interview Responses:
+${JSON.stringify(answers, null, 2)}
 
-Candidate Answer:
-${answer}
+Evaluate the candidate across the entire interview based on:
 
-Evaluate the answer based on:
-
-1. Relevance to the question.
+1. Relevance of answers.
 2. Technical accuracy.
 3. Communication clarity.
 4. Confidence.
 5. Completeness.
+6. Consistency across answers.
 
-Give constructive feedback.
+Give constructive feedback based on the interview as a whole.
 
 Return ONLY valid JSON in this format:
 
@@ -37,6 +45,7 @@ Return ONLY valid JSON in this format:
   "overallFeedback": ""
 }
 `;
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
@@ -66,15 +75,29 @@ Return ONLY valid JSON in this format:
       success: true,
       feedback,
     });
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    console.error("Interview evaluation error:", error);
+
+    if (
+      error instanceof Error &&
+      error.message.includes("429")
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "AI usage limit reached. Please try again later.",
+        },
+        { status: 429 },
+      );
+    }
 
     return NextResponse.json(
       {
         success: false,
-        message: "Gemini is currently busy. Please try again.",
+        message: "Failed to evaluate interview.",
       },
-      { status: 503 },
+      { status: 500 },
     );
   }
 }

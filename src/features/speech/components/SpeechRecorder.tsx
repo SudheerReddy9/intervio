@@ -10,10 +10,11 @@ import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 import { useEffect } from "react";
 interface SpeechRecorderProps {
   onTranscriptChange: (transcript: string) => void;
+  questionId: number;
 }
-
 const SpeechRecorder: React.FC<SpeechRecorderProps> = ({
   onTranscriptChange,
+  questionId,
 }) => {
   const {
     isListening,
@@ -25,6 +26,9 @@ const SpeechRecorder: React.FC<SpeechRecorderProps> = ({
   useEffect(() => {
     onTranscriptChange(transcript);
   }, [transcript, onTranscriptChange]);
+  useEffect(() => {
+    clearTranscript();
+  }, [questionId]);
   return (
     <Box
       sx={{

@@ -25,7 +25,7 @@ export function useSpeechRecognition() {
 
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = "en-US";
+    recognition.lang = "en-IN";
     recognition.onstart = () => {
       setIsListening(true);
     };
@@ -53,9 +53,13 @@ export function useSpeechRecognition() {
   const stopListening = useCallback(() => {
     recognitionRef.current?.stop();
   }, []);
-  const clearTranscript = () => {
+  const clearTranscript = useCallback(() => {
+    recognitionRef.current?.abort();
+    recognitionRef.current = null;
+
+    setIsListening(false);
     setTranscript("");
-  };
+  }, []);
   return {
     isListening,
     transcript,
