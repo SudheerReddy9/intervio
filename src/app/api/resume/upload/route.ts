@@ -1,5 +1,8 @@
+import "pdf-parse/worker";
 import { ai } from "@/lib/gemini";
 import { NextResponse } from "next/server";
+import { PDFParse } from "pdf-parse";
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -40,22 +43,23 @@ export async function POST(request: Request) {
 
     const buffer = Buffer.from(arrayBuffer);
 
-    const base64Pdf = buffer.toString("base64");
+    console.time("pdf-extraction");
 
-    console.log("PDF Buffer:", buffer.length);
-    console.log("Base64 length:", base64Pdf.length);
-    console.time('resume-ai')
+    const parser = new PDFParse({
+      data: buffer,
+    });
+
+    const parsedPdf = await parser.getText();
+
+    await parser.destroy();
+
+
+    const resumeText = parsedPdf.text;
+
+
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: [
-        {
-          inlineData: {
-            mimeType: "application/pdf",
-            data: base64Pdf,
-          },
-        },
-        {
-          text: `
+      contents: `
 You are an experienced technical interviewer.
 
 Analyze the candidate's resume and determine their primary professional
@@ -63,16 +67,15 @@ role, technical domain, experience level, skills, and areas of expertise.
 
 Act as an interviewer appropriate for that candidate's background.
 
-For example:
-- Frontend candidate → Frontend interviewer
-- Backend candidate → Backend interviewer
-- AI/ML candidate → AI/ML interviewer
-- Data Science candidate → Data Science interviewer
-- DevOps candidate → DevOps/Cloud interviewer
-- Full Stack candidate → Full Stack interviewer
-- Student/Fresher → Entry-level interviewer
+Keep every interview question concise and conversational.
 
-Generate exactly 8 interview questions specifically based on the candidate's resume.
+Rules:
+- Maximum 20 words per question.
+- Ask only one main idea per question.
+- Do not combine multiple technical questions into one.
+- Avoid repeating resume details unnecessarily.
+- Refer to the candidate's project/company only when useful.
+- Prefer natural spoken interview questions.
 
 Focus on:
 - Work experience
@@ -86,11 +89,15 @@ Focus on:
 Do not ask questions about technologies or experience that are not
 supported by the resume.
 
-Return ONLY valid JSON in the required format.
+CANDIDATE RESUME:
+------------------
+${resumeText}
+------------------
 
+Return ONLY valid JSON in this exact format:
 
 {
- "questions": [
+  "questions": [
     {
       "question": "",
       "category": ""
@@ -98,10 +105,9 @@ Return ONLY valid JSON in the required format.
   ]
 }
 `,
-        },
-      ],
     });
-    console.timeEnd("resume-ai")
+
+    console.timeEnd("resume-ai");
     const text = response.text;
 
     if (!text) {

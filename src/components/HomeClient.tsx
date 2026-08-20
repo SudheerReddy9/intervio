@@ -6,7 +6,6 @@ import {
   Typography,
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import MicIcon from "@mui/icons-material/Mic";
 export default function Home(): React.JSX.Element | null {
   const getScoreColor = (score: number) => {
     if (score < 30) return "#EF4444";
@@ -15,9 +14,9 @@ export default function Home(): React.JSX.Element | null {
     return "#22C55E";
   };
   const demoFeedback = {
-    communication: 29,
-    technical: 46,
-    confidence: 78,
+    communication: 85,
+    technical: 78,
+    confidence: 83,
   };
   return (
     <Box
@@ -96,9 +95,9 @@ export default function Home(): React.JSX.Element | null {
             fontSize: "1.1rem",
           }}
         >
-          Practice realistic mock interviews, receive instant AI feedback,
-          improve your communication skills, and track your progress—all in one
-          place.
+          Upload your resume, practice personalized AI mock interviews,
+          and get actionable feedback on your technical knowledge,
+          communication, and confidence.
         </Typography>
 
         <Box
@@ -147,36 +146,25 @@ export default function Home(): React.JSX.Element | null {
           borderColor: "divider",
         }}
       >
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 700,
-            mb: 2,
-          }}
-        >
-          🎤 Mock Interview
+        <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+          ✨ Interview Performance
         </Typography>
 
         <Divider sx={{ mb: 3 }} />
-
-        <Typography color="text.secondary">Question 3 of 8</Typography>
-
-        <Typography
-          variant="h6"
-          sx={{
-            mt: 1,
-            mb: 3,
-          }}
-        >
-          Tell me about yourself.
+        <Typography color="text.secondary">
+          Question 3 of 10
         </Typography>
 
+        <Typography variant="h6" sx={{ my: 1 }}>
+          Tell me about a challenging project you worked on
+          and how you approached it.
+        </Typography>
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            mb: 4,
+            mb: 2,
           }}
         >
           <Box
@@ -186,17 +174,23 @@ export default function Home(): React.JSX.Element | null {
               gap: 1,
             }}
           >
-            <MicIcon color="error" />
+            <Typography color="text.secondary">
+              Overall Score
+            </Typography>
 
-            <Typography color="error.main" sx={{ fontWeight: 600 }}>
-              Recording...
+            <Typography
+              sx={{
+                fontWeight: 800,
+                mt: 1,
+              }}
+            >
+              82%
             </Typography>
           </Box>
 
-          <Typography sx={{ fontWeight: 600 }}>00:48</Typography>
         </Box>
 
-        <Divider sx={{ mb: 3 }} />
+        <Divider sx={{ mb: 1 }} />
 
         <Typography
           variant="h6"
@@ -291,6 +285,36 @@ export default function Home(): React.JSX.Element | null {
               height: 8,
             }}
           />
+        </Box>
+        <Box
+          sx={{
+            mt: 3,
+            p: 2.5,
+            bgcolor: "#F0FDF4",
+            border: "1px solid #BBF7D0",
+            borderRadius: 2,
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 700,
+              color: "#166534",
+            }}
+          >
+            ✓ Strong communication
+          </Typography>
+
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 1,
+              color: "#475569",
+              lineHeight: 1.6,
+            }}
+          >
+            Good overall performance. Add more technical depth and project examples
+            to make your answers stronger.
+          </Typography>
         </Box>
       </Box>
     </Box>

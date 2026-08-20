@@ -13,8 +13,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Intervio",
-  description: "AI-powered interview preparation platform",
+  title: "YourCareerForge | AI Interview Preparation",
+  description:
+    "Practice personalized interviews, get AI-powered feedback, and improve your interview performance with YourCareerForge.",
 };
 
 export default function RootLayout({
