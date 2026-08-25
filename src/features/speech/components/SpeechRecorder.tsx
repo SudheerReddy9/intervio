@@ -28,7 +28,7 @@ const SpeechRecorder: React.FC<SpeechRecorderProps> = ({
   }, [transcript, onTranscriptChange]);
   useEffect(() => {
     clearTranscript();
-  }, [questionId]);
+  }, [clearTranscript, questionId]);
   return (
     <Box
       sx={{

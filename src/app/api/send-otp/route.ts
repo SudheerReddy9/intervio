@@ -115,6 +115,8 @@ LIMIT 1
             message: 'OTP request received'
         });
     } catch (error) {
+
+        console.log('Failed to send error', error)
         return NextResponse.json({
             success: false,
             message: 'Failed to send verification code'
