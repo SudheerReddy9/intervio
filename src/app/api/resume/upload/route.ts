@@ -60,51 +60,52 @@ export async function POST(request: Request) {
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
       contents: `
-You are an experienced technical interviewer.
+    You are an experienced technical interviewer.
 
-Analyze the candidate's resume and determine their primary professional
-role, technical domain, experience level, skills, and areas of expertise.
+    Analyze the candidate's resume and determine their primary professional
+    role, technical domain, experience level, skills, and areas of expertise.
 
-Act as an interviewer appropriate for that candidate's background.
+    Act as an interviewer appropriate for that candidate's background.
+    Generate EXACTLY 8 interview questions based on the candidate's resume.
+    The questions array MUST contain exactly 8 items.
+    Keep every interview question concise and conversational.
 
-Keep every interview question concise and conversational.
+    Rules:
+    - Maximum 20 words per question.
+    - Ask only one main idea per question.
+    - Do not combine multiple technical questions into one.
+    - Avoid repeating resume details unnecessarily.
+    - Refer to the candidate's project/company only when useful.
+    - Prefer natural spoken interview questions.
 
-Rules:
-- Maximum 20 words per question.
-- Ask only one main idea per question.
-- Do not combine multiple technical questions into one.
-- Avoid repeating resume details unnecessarily.
-- Refer to the candidate's project/company only when useful.
-- Prefer natural spoken interview questions.
+    Focus on:
+    - Work experience
+    - Projects
+    - Technical skills
+    - Technologies mentioned
+    - Responsibilities
+    - Achievements
+    - Relevant fundamentals for their field
 
-Focus on:
-- Work experience
-- Projects
-- Technical skills
-- Technologies mentioned
-- Responsibilities
-- Achievements
-- Relevant fundamentals for their field
+    Do not ask questions about technologies or experience that are not
+    supported by the resume.
 
-Do not ask questions about technologies or experience that are not
-supported by the resume.
+    CANDIDATE RESUME:
+    ------------------
+    ${resumeText}
+    ------------------
 
-CANDIDATE RESUME:
-------------------
-${resumeText}
-------------------
+    Return ONLY valid JSON in this exact format:
 
-Return ONLY valid JSON in this exact format:
-
-{
-  "questions": [
     {
-      "question": "",
-      "category": ""
+      "questions": [
+        {
+          "question": "",
+          "category": ""
+        }
+      ]
     }
-  ]
-}
-`,
+    `,
     });
 
     console.timeEnd("resume-ai");

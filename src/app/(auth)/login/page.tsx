@@ -1,11 +1,85 @@
 "use client";
-import { Box, Button, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, Divider, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { theme } from "@/theme";
+import { useState } from "react";
 
 const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('')
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
   const router = useRouter();
+  const handleSendOTP = async () => {
+    if (!email.trim()) {
+      console.log("Email is required");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          purpose: "login",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log(data.message);
+        return;
+      }
+
+      console.log("OTP response:", data);
+
+      setOtpSent(true);
+    } catch (error) {
+      console.log("Send OTP error:", error);
+    }
+  };
+  const handleVerifyOTP = async () => {
+    if (!otp.trim()) {
+      console.log("Verification code is required");
+      return;
+    }
+
+    if (otp.length !== 6) {
+      console.log("Verification code must be 6 digits");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log(data.message);
+        return;
+      }
+
+      console.log("Login verification:", data);
+
+      setOtpSent(false);
+      router.push("/dashboard");
+    } catch (error) {
+      console.log("Verify OTP error:", error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -34,29 +108,23 @@ const LoginPage: React.FC = () => {
       >
         Continue your interview journey
       </Typography>
-      <Box>
+      <Box
+        sx={{
+          mb: 1.5
+        }}
+      >
         <Typography>Email</Typography>
-        <TextField fullWidth placeholder="example@email.com"></TextField>
-        <Typography>Password</Typography>
-        <TextField fullWidth placeholder="********"></TextField>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button
-            variant="text"
-            sx={{
-              fontFamily: theme.typography.body2,
-            }}
-          >
-            Forgot Password?
-          </Button>
-        </Box>
+        <TextField
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type='email'
+          placeholder="example@email.com"
+        />
       </Box>
       <Button
         fullWidth
+        onClick={handleSendOTP}
         sx={{
           p: 1,
           fontFamily: theme.typography.button,
@@ -64,13 +132,13 @@ const LoginPage: React.FC = () => {
           color: theme.palette.primary.contrastText,
         }}
       >
-        Sign In
+        Send Verification Code
       </Button>
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          my: 3,
+          mb: 1.5,
         }}
       >
         <Divider sx={{ flex: 1 }} />
@@ -100,7 +168,7 @@ const LoginPage: React.FC = () => {
             fontFamily: theme.typography.body2,
           }}
         >
-          Don `&apos;`t have an account?
+          Don&apos;t have an account?
         </Typography>
         <Button
           onClick={() => router.push("/register")}
@@ -115,6 +183,57 @@ const LoginPage: React.FC = () => {
           Create Account
         </Button>
       </Box>
+      <Dialog
+        open={otpSent}
+        onClose={() => setOtpSent(false)}
+        fullWidth
+        maxWidth="xs"
+      >
+        <Box sx={{ p: 4 }}>
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "center", mb: 1 }}
+          >
+            Verify Your Email
+          </Typography>
+
+          <Typography
+            sx={{
+              textAlign: "center",
+              color: "text.secondary",
+              mb: 3,
+            }}
+          >
+            Enter the 6-digit verification code sent to {email}
+          </Typography>
+
+          <TextField
+            fullWidth
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            placeholder="Enter 6-digit code"
+            slotProps={{
+              htmlInput: {
+                maxLength: 6,
+                inputMode: "numeric",
+              },
+            }}
+          />
+
+          <Button
+            onClick={handleVerifyOTP}
+            fullWidth
+            sx={{
+              mt: 2,
+              p: 1,
+              background: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+            }}
+          >
+            Verify Code
+          </Button>
+        </Box>
+      </Dialog>
     </Box>
   );
 };

@@ -1,8 +1,6 @@
 "use client";
-import FeedbackCard from "@/components/FeedbackCard";
 import QuestionCard from "@/features/speech/components/QuestionCard";
 import SpeechRecorder from "@/features/speech/components/SpeechRecorder";
-import { InterviewFeedback } from "@/features/speech/types";
 import { Box, Button, Container } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
@@ -20,7 +18,6 @@ export default function InterviewPage() {
     { question: string; answer: string }[]
   >([]);
   const router = useRouter();
-  const [feedback, setFeedback] = useState<InterviewFeedback | null>(null);
   const storedQuestions = useSyncExternalStore(
     () => () => { },
     () => sessionStorage.getItem("interviewQuestions"),
@@ -40,6 +37,7 @@ export default function InterviewPage() {
   // };
   const evaluateInterview = async (
     interviewAnswers: { question: string; answer: string }[],
+    interviewId: number
   ) => {
     try {
       const response = await fetch("/api/interview/evaluate", {
@@ -49,6 +47,7 @@ export default function InterviewPage() {
         },
         body: JSON.stringify({
           answers: interviewAnswers,
+          interviewId
         }),
       });
 
@@ -68,6 +67,30 @@ export default function InterviewPage() {
       console.error("Evaluation failed:", error);
     }
   };
+  const saveInterview = async (
+    InterviewAnswers: { question: string; answer: string }[],
+  ) => {
+    try {
+      const response = await fetch('/api/interview/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          questions,
+          answers: InterviewAnswers
+        })
+      });
+      const data = await response.json();
+
+      console.log("Save interview response:", data);
+
+      return data;
+    } catch (error) {
+      console.error("Failed to save interview:", error);
+      throw error
+    }
+  }
   const handleNextQuestion = async () => {
     console.log("Next/Finish button clicked");
     console.log("Transcript:", transcript);
@@ -91,7 +114,17 @@ export default function InterviewPage() {
       currentQuestion === questions.length - 1;
 
     if (isLastQuestion) {
-      await evaluateInterview(updatedAnswers);
+      const savedInterview = await saveInterview(updatedAnswers);
+
+      if (!savedInterview.success) {
+        console.error("Interview could not be saved");
+        return;
+      }
+
+      await evaluateInterview(
+        updatedAnswers,
+        savedInterview.interviewId,
+      );
 
       router.push("/interview/results");
 
@@ -100,32 +133,6 @@ export default function InterviewPage() {
 
     setCurrentQuestion((previous) => previous + 1);
     setTranscript("");
-  };
-  const evaluateAnswer = async () => {
-    if (!transcript.trim()) {
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/interview/evaluate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          question: questions[currentQuestion].question,
-          answer: transcript,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // setFeedback(data.feedback);
-      }
-    } catch (error) {
-      console.error(error);
-    }
   };
   if (questions.length === 0) {
     return (
@@ -154,13 +161,6 @@ export default function InterviewPage() {
           my: 2,
         }}
       >
-        {/* <Button
-          variant="contained"
-          disabled={!transcript.trim()}
-          onClick={evaluateAnswer}
-        >
-          Evaluate Answer
-        </Button> */}
         <Button
           variant="contained"
           disabled={!transcript.trim()}
