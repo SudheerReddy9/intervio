@@ -36,8 +36,7 @@ export default function InterviewPage() {
   //   }
   // };
   const evaluateInterview = async (
-    interviewAnswers: { question: string; answer: string }[],
-    interviewId: number
+    interviewAnswers: { question: string; answer: string }[]
   ) => {
     try {
       const response = await fetch("/api/interview/evaluate", {
@@ -47,7 +46,6 @@ export default function InterviewPage() {
         },
         body: JSON.stringify({
           answers: interviewAnswers,
-          interviewId
         }),
       });
 
@@ -55,42 +53,46 @@ export default function InterviewPage() {
 
       console.log("Final evaluation:", data);
 
-      if (data.success) {
-        sessionStorage.setItem(
-          "interviewFeedback",
-          JSON.stringify(data.feedback),
-        );
-
-        console.log("Interview feedback:", data.feedback);
+      if (!response.ok || !data.success) {
+        console.error("Evaluation failed:", data.message);
+        return false;
       }
+
+      sessionStorage.setItem(
+        "interviewFeedback",
+        JSON.stringify(data.feedback)
+      );
+
+      return true;
     } catch (error) {
       console.error("Evaluation failed:", error);
+      return false;
     }
   };
-  const saveInterview = async (
-    InterviewAnswers: { question: string; answer: string }[],
-  ) => {
-    try {
-      const response = await fetch('/api/interview/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          questions,
-          answers: InterviewAnswers
-        })
-      });
-      const data = await response.json();
+  // const saveInterview = async (
+  //   InterviewAnswers: { question: string; answer: string }[],
+  // ) => {
+  //   try {
+  //     const response = await fetch('/api/interview/save', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         questions,
+  //         answers: InterviewAnswers
+  //       })
+  //     });
+  //     const data = await response.json();
 
-      console.log("Save interview response:", data);
+  //     console.log("Save interview response:", data);
 
-      return data;
-    } catch (error) {
-      console.error("Failed to save interview:", error);
-      throw error
-    }
-  }
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Failed to save interview:", error);
+  //     throw error
+  //   }
+  // }
   const handleNextQuestion = async () => {
     console.log("Next/Finish button clicked");
     console.log("Transcript:", transcript);
@@ -114,20 +116,28 @@ export default function InterviewPage() {
       currentQuestion === questions.length - 1;
 
     if (isLastQuestion) {
-      const savedInterview = await saveInterview(updatedAnswers);
+      // const savedInterview = await saveInterview(updatedAnswers);
 
-      if (!savedInterview.success) {
-        console.error("Interview could not be saved");
+      // if (!savedInterview.success) {
+      //   console.error("Interview could not be saved");
+      //   return;
+      // }
+
+      // await evaluateInterview(
+      //   updatedAnswers,
+      //   savedInterview.interviewId,
+      // );
+
+      // router.push("/interview/results");
+      const evaluationSuccess =
+        await evaluateInterview(updatedAnswers);
+
+      if (!evaluationSuccess) {
+        console.error("Interview evaluation failed");
         return;
       }
 
-      await evaluateInterview(
-        updatedAnswers,
-        savedInterview.interviewId,
-      );
-
       router.push("/interview/results");
-
       return;
     }
 
@@ -152,7 +162,6 @@ export default function InterviewPage() {
         questionId={questions[currentQuestion].id}
         onTranscriptChange={setTranscript}
       />
-      {/* <FeedbackCard feedback={feedback} /> */}
 
       <Box
         sx={{

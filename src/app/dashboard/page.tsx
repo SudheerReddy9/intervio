@@ -59,6 +59,7 @@ const DashboardPage = async () => {
             <Button
                 variant="contained"
                 sx={{ mt: 3 }}
+                href="/resume"
             >
                 Start Interview
             </Button>
