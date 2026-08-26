@@ -21,7 +21,7 @@
 //     const feedback = await generateInterviewFeedback(answers);
 
 //     await db.execute(
-//       `UPDATE Interviews
+//       `UPDATE interviews
 //      SET feedback = ?, status = ?
 //      WHERE id = ?`,
 //       [
@@ -41,7 +41,7 @@
 
 //     try {
 //       await db.execute(
-//         `UPDATE Interviews
+//         `UPDATE interviews
 //        SET status = ?
 //        WHERE id = ?`,
 //         ["evaluation_failed", interviewId],

@@ -67,7 +67,7 @@ export async function POST(request: Request) {
             );
         }
         await db.execute(
-            `UPDATE Interviews
+            `UPDATE interviews
    SET retry_count = retry_count + 1,
        last_retry_at = CURRENT_TIMESTAMP
    WHERE id = ?`,
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         );
         const feedback = await generateInterviewFeedback(answers);
         await db.execute(
-            `UPDATE Interviews
+            `UPDATE interviews
    SET feedback = ?, status = ?
    WHERE id = ?`,
             [

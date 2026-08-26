@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
         }
         const [results] = await db.execute<ResultSetHeader>(
-            `INSERT INTO Interviews
+            `INSERT INTO interviews
     (questions, answers, status)
     VALUES(?,?,?)`,
             [
