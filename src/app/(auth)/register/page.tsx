@@ -1,275 +1,653 @@
 "use client";
-import { theme } from "@/theme";
+
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Dialog,
-  Divider,
+  FormControlLabel,
   TextField,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-const RegisterPage: React.FC = () => {
+
+const RegisterPage = () => {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+
+  const [error, setError] = useState("");
+  const [otpError, setOtpError] = useState("");
+
   const handleSendOTP = async () => {
     if (!name.trim()) {
-      console.log('Name is required')
+      setError("Please enter your full name.");
       return;
     }
+
     if (!email.trim()) {
-      console.log('Email is required')
+      setError("Please enter your email address.");
       return;
     }
+
     if (!agreedToTerms) {
-      console.log('Please agree to terms and Privacy Policy')
+      setError(
+        "Please agree to the Terms and Privacy Policy."
+      );
       return;
     }
+
+    setLoading(true);
+    setError("");
+
     try {
-      const response = await fetch('/api/send-otp', {
-        method: 'POST',
+      const response = await fetch("/api/send-otp", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
-          name,
-          email,
-          purpose: 'register',
+          name: name.trim(),
+          email: email.trim(),
+          purpose: "register",
         }),
       });
+
       const data = await response.json();
 
       if (!response.ok) {
-        console.log(data.message);
+        setError(
+          data.message ||
+          "Unable to send verification code."
+        );
         return;
       }
+
+      setOtp("");
+      setOtpError("");
       setOtpSent(true);
-      console.log("OTP senty successfully")
     } catch (error) {
-      console.log('Send OTP error:', error)
-    }
-    // console.log({
-    //   name,
-    //   email,
-    //   agreedToTerms
-    // })
-  }
-  const handleVerifyOTP = async () => {
-    if (!otp.trim()) {
-      console.log('Verification code is required')
-      return;
-    }
-    if (otp.length !== 6) {
-      console.log('Verification code must be 6 digits')
-      return;
-    }
-    try {
-      const response = await fetch('/api/verify-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        console.log(data.message)
-        return;
-      }
-      console.log('Verification Response', data);
-      setOtpSent(false);
-      router.push("/dashboard");
+      console.error("Send OTP error:", error);
 
-    } catch (error) {
-      console.log('Verify OTP error:', error);
+      setError(
+        "Something went wrong while sending the verification code."
+      );
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleVerifyOTP = async () => {
+    if (!otp.trim()) {
+      setOtpError(
+        "Please enter your verification code."
+      );
+      return;
+    }
+
+    if (otp.length !== 6) {
+      setOtpError(
+        "Verification code must be 6 digits."
+      );
+      return;
+    }
+
+    setVerifying(true);
+    setOtpError("");
+
+    try {
+      const response = await fetch(
+        "/api/verify-otp",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            email: email.trim(),
+            otp,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setOtpError(
+          data.message ||
+          "Invalid verification code."
+        );
+        return;
+      }
+
+      setOtpSent(false);
+
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Verify OTP error:", error);
+
+      setOtpError(
+        "Something went wrong while verifying your code."
+      );
+    } finally {
+      setVerifying(false);
+    }
+  };
+
   return (
     <Box
+      component="main"
       sx={{
-        p: 2,
+        minHeight: {
+          xs: "calc(100vh - 64px)",
+          sm: "calc(100vh - 72px)",
+        },
+
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: 500,
-        borderWidth: "5px",
-        background: theme.palette.background.paper,
-        borderRadius: theme.shape.borderRadius,
+
+        px: {
+          xs: 2,
+          sm: 3,
+        },
+
+        py: {
+          xs: 5,
+          sm: 7,
+          md: 8,
+        },
+
+        background:
+          "linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 50%, #F5F3FF 100%)",
       }}
     >
+      {/* REGISTER CARD */}
+
       <Box
         sx={{
-          textAlign: "center",
+          width: "100%",
+          maxWidth: 500,
+
+          bgcolor: "#FFFFFF",
+
+          border: "1px solid #E2E8F0",
+
+          borderRadius: {
+            xs: 3,
+            sm: 4,
+          },
+
+          p: {
+            xs: 3,
+            sm: 4.5,
+          },
+
+          boxShadow:
+            "0 24px 70px rgba(15, 23, 42, 0.10)",
         }}
       >
-        <Image src="/intervio_Logo.png" width={100} height={100} alt={""} />
-      </Box>
-      <Typography sx={{ fontFamily: theme.typography.h6, textAlign: "center" }}>
-        Create Your Account
-      </Typography>
+        {/* LOGO */}
 
-      <Typography
-        sx={{ fontFamily: theme.typography.body1, textAlign: "center" }}
-      >
-        Start your interview preparation journey
-      </Typography>
-      <Box>
-        <Typography>Full Name</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mb: 3,
+          }}
+        >
+          <Box
+            sx={{
+              position: "relative",
+
+              width: {
+                xs: 180,
+                sm: 210,
+              },
+
+              height: 52,
+            }}
+          >
+            <Image
+              src="/Yourcareer_Header.png"
+              alt="YourCareerForge"
+              fill
+              priority
+              sizes="210px"
+              style={{
+                objectFit: "contain",
+              }}
+            />
+          </Box>
+        </Box>
+
+        {/* TITLE */}
+
+        <Typography
+          component="h1"
+          sx={{
+            textAlign: "center",
+
+            fontSize: {
+              xs: "1.75rem",
+              sm: "2rem",
+            },
+
+            fontWeight: 800,
+            color: "#0F172A",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          Create your account
+        </Typography>
+
+        <Typography
+          sx={{
+            mt: 1,
+            mb: 4,
+
+            textAlign: "center",
+            color: "#64748B",
+            lineHeight: 1.6,
+          }}
+        >
+          Start practicing personalized interviews and
+          improving your skills with AI feedback.
+        </Typography>
+
+        {/* ERROR */}
+
+        {error && (
+          <Alert
+            severity="error"
+            sx={{
+              mb: 2.5,
+              borderRadius: 2,
+            }}
+          >
+            {error}
+          </Alert>
+        )}
+
+        {/* NAME */}
+
+        <Typography
+          component="label"
+          htmlFor="full-name"
+          sx={{
+            display: "block",
+            mb: 1,
+            fontWeight: 600,
+            color: "#334155",
+          }}
+        >
+          Full name
+        </Typography>
+
         <TextField
+          id="full-name"
           fullWidth
           value={name}
-          placeholder="Full Name"
-          onChange={(e) => setName(e.target.value)}
-        ></TextField>
-        <Typography>Email</Typography>
-        <TextField fullWidth value={email} type="email" onChange={(e) => setEmail(e.target.value)} placeholder="Email"></TextField>
-        {/* <Typography>Password</Typography>
-        <TextField fullWidth placeholder="Create a password"></TextField>
-        <Typography>Confirm Password</Typography>
-        <TextField fullWidth placeholder="Re-enter your password"></TextField> */}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        <Checkbox checked={agreedToTerms} onChange={(e) => setAgreedToTerms(e.target.checked)}></Checkbox>
-        <Typography
+          onChange={(event) => {
+            setName(event.target.value);
+            setError("");
+          }}
+          placeholder="Enter your full name"
+          autoComplete="name"
           sx={{
-            pt: 1,
+            mb: 2.5,
+
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 2.5,
+            },
+          }}
+        />
+
+        {/* EMAIL */}
+
+        <Typography
+          component="label"
+          htmlFor="register-email"
+          sx={{
+            display: "block",
+            mb: 1,
+            fontWeight: 600,
+            color: "#334155",
           }}
         >
-          I agree to the Terms and Privacy Policy
+          Email address
         </Typography>
-      </Box>
-      <Button
-        fullWidth
-        onClick={handleSendOTP}
-        sx={{
-          p: 1,
-          fontFamily: theme.typography.button,
-          background: theme.palette.primary.main,
-          color: theme.palette.primary.contrastText,
-        }}
-      >
-        Send Verification Code
-      </Button>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          my: 3,
-        }}
-      >
-        <Divider sx={{ flex: 1 }} />
-        <Typography
-          variant="body2"
-          sx={{
-            px: 2,
-            color: "text.secondary",
+
+        <TextField
+          id="register-email"
+          fullWidth
+          value={email}
+          type="email"
+          onChange={(event) => {
+            setEmail(event.target.value);
+            setError("");
           }}
-        >
-          OR
-        </Typography>
-        <Divider sx={{ flex: 1 }} />
-      </Box>
-      <Box
-        sx={{
-          textAlign: "center",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        <Typography
-          variant="body1"
+          placeholder="you@example.com"
+          autoComplete="email"
           sx={{
-            px: 1,
-            fontFamily: theme.typography.body2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 2.5,
+            },
           }}
-        >
-          Already have an account?
-        </Typography>
+        />
+
+        {/* TERMS */}
+
+        <FormControlLabel
+          sx={{
+            mt: 2,
+            mb: 1,
+
+            alignItems: "flex-start",
+
+            "& .MuiFormControlLabel-label": {
+              pt: "8px",
+            },
+          }}
+          control={
+            <Checkbox
+              checked={agreedToTerms}
+              onChange={(event) => {
+                setAgreedToTerms(
+                  event.target.checked
+                );
+
+                setError("");
+              }}
+            />
+          }
+          label={
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#64748B",
+                lineHeight: 1.6,
+              }}
+            >
+              I agree to the Terms of Service and
+              Privacy Policy.
+            </Typography>
+          }
+        />
+
+        {/* CREATE ACCOUNT */}
+
         <Button
-          onClick={() => router.push("/login")}
-          variant="text"
+          fullWidth
+          variant="contained"
+          disabled={loading}
+          onClick={handleSendOTP}
           sx={{
-            fontFamily: theme.typography.body2,
+            mt: 1.5,
+
+            py: 1.4,
+
+            borderRadius: 2.5,
+
             textTransform: "none",
-            minWidth: "auto",
-            p: 0,
+            fontWeight: 700,
+
+            boxShadow:
+              "0 8px 20px rgba(37, 99, 235, 0.18)",
           }}
         >
-          Sign In
+          {loading ? (
+            <CircularProgress
+              size={22}
+              sx={{
+                color: "#FFFFFF",
+              }}
+            />
+          ) : (
+            "Create Account"
+          )}
         </Button>
+
+        {/* LOGIN */}
+
+        <Box
+          sx={{
+            mt: 3,
+
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+
+            flexWrap: "wrap",
+            gap: 0.75,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#64748B",
+            }}
+          >
+            Already have an account?
+          </Typography>
+
+          <Button
+            component={Link}
+            href="/login"
+            variant="text"
+            sx={{
+              minWidth: "auto",
+              p: 0,
+
+              textTransform: "none",
+              fontWeight: 700,
+            }}
+          >
+            Sign in
+          </Button>
+        </Box>
       </Box>
+
+      {/* OTP DIALOG */}
 
       <Dialog
         open={otpSent}
-        onClose={() => setOtpSent(false)}
+        onClose={() => {
+          if (!verifying) {
+            setOtpSent(false);
+          }
+        }}
         fullWidth
         maxWidth="xs"
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 4,
+              m: 2,
+            },
+          },
+        }}
       >
-        <Box sx={{ p: 4 }}>
-          <Typography
-            variant="h6"
+        <Box
+          sx={{
+            p: {
+              xs: 3,
+              sm: 4,
+            },
+          }}
+        >
+          <Box
             sx={{
-              textAlign: "center",
-              mb: 1,
+              width: 56,
+              height: 56,
+
+              mx: "auto",
+              mb: 2,
+
+              borderRadius: "50%",
+
+              bgcolor: "#EEF2FF",
+
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+
+              fontSize: "1.5rem",
             }}
           >
-            Verify Your Email
+            ✉️
+          </Box>
+
+          <Typography
+            variant="h5"
+            sx={{
+              textAlign: "center",
+              fontWeight: 800,
+              color: "#0F172A",
+            }}
+          >
+            Verify your email
           </Typography>
 
           <Typography
             sx={{
               textAlign: "center",
-              color: "text.secondary",
+
+              color: "#64748B",
+
+              mt: 1,
               mb: 3,
+
+              lineHeight: 1.6,
             }}
           >
-            Enter the 6-digit verification code sent to {email}
+            We sent a 6-digit verification code to{" "}
+            <Box
+              component="span"
+              sx={{
+                color: "#334155",
+                fontWeight: 600,
+              }}
+            >
+              {email}
+            </Box>
           </Typography>
+
+          {otpError && (
+            <Alert
+              severity="error"
+              sx={{
+                mb: 2,
+                borderRadius: 2,
+              }}
+            >
+              {otpError}
+            </Alert>
+          )}
 
           <TextField
             fullWidth
+            autoFocus
             value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="Enter 6-digit code"
+            onChange={(event) => {
+              const value =
+                event.target.value.replace(/\D/g, "");
+
+              setOtp(value);
+              setOtpError("");
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                handleVerifyOTP();
+              }
+            }}
+            placeholder="000000"
             slotProps={{
               htmlInput: {
                 maxLength: 6,
                 inputMode: "numeric",
+
+                style: {
+                  textAlign: "center",
+                  fontSize: "1.5rem",
+                  letterSpacing: "0.4rem",
+                  fontWeight: 700,
+                },
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2.5,
               },
             }}
           />
 
           <Button
             fullWidth
+            variant="contained"
+            disabled={
+              verifying || otp.length !== 6
+            }
             onClick={handleVerifyOTP}
             sx={{
-              mt: 2,
-              p: 1,
-              background: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
+              mt: 2.5,
+              py: 1.4,
+
+              borderRadius: 2.5,
+
+              textTransform: "none",
+              fontWeight: 700,
             }}
           >
-            Verify Code
+            {verifying ? (
+              <CircularProgress
+                size={22}
+                sx={{
+                  color: "#FFFFFF",
+                }}
+              />
+            ) : (
+              "Verify & Create Account"
+            )}
+          </Button>
+
+          <Button
+            fullWidth
+            disabled={verifying}
+            onClick={() => {
+              setOtpSent(false);
+              setOtp("");
+              setOtpError("");
+            }}
+            sx={{
+              mt: 1,
+
+              textTransform: "none",
+              color: "#64748B",
+            }}
+          >
+            Use a different email
           </Button>
         </Box>
       </Dialog>
-
     </Box>
   );
 };
+
 export default RegisterPage;

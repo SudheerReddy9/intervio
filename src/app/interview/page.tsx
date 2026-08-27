@@ -1,7 +1,7 @@
 "use client";
 import QuestionCard from "@/features/speech/components/QuestionCard";
 import SpeechRecorder from "@/features/speech/components/SpeechRecorder";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button, CircularProgress, Container, LinearProgress, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 
@@ -14,6 +14,7 @@ interface InterviewQuestion {
 export default function InterviewPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [transcript, setTranscript] = useState("");
+  const [isEvaluating, setIsEvaluating] = useState(false)
   const [answers, setAnswers] = useState<
     { question: string; answer: string }[]
   >([]);
@@ -116,23 +117,13 @@ export default function InterviewPage() {
       currentQuestion === questions.length - 1;
 
     if (isLastQuestion) {
-      // const savedInterview = await saveInterview(updatedAnswers);
+      setIsEvaluating(true);
 
-      // if (!savedInterview.success) {
-      //   console.error("Interview could not be saved");
-      //   return;
-      // }
-
-      // await evaluateInterview(
-      //   updatedAnswers,
-      //   savedInterview.interviewId,
-      // );
-
-      // router.push("/interview/results");
       const evaluationSuccess =
         await evaluateInterview(updatedAnswers);
 
       if (!evaluationSuccess) {
+        setIsEvaluating(false);
         console.error("Interview evaluation failed");
         return;
       }
@@ -165,20 +156,195 @@ export default function InterviewPage() {
 
       <Box
         sx={{
+          position: "sticky",
+          bottom: 0,
+          zIndex: 10,
+
           display: "flex",
           justifyContent: "flex-end",
-          my: 2,
+
+          mt: 2,
+          py: 2,
+          px: {
+            xs: 1,
+            sm: 2,
+          },
+
+
+          backdropFilter: "blur(10px)",
+
+          borderTop: "1px solid #E2E8F0",
         }}
       >
         <Button
           variant="contained"
           disabled={!transcript.trim()}
           onClick={handleNextQuestion}
+          sx={{
+            width: {
+              xs: "100%",
+              sm: "auto",
+            },
+
+            minWidth: {
+              sm: 180,
+            },
+
+            py: 1.4,
+            px: 4,
+
+            borderRadius: 2.5,
+
+            textTransform: "none",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+
+            boxShadow: transcript.trim()
+              ? "0 8px 20px rgba(37, 99, 235, 0.20)"
+              : "none",
+          }}
         >
           {currentQuestion === questions.length - 1
             ? "Finish Interview"
             : "Next Question"}
         </Button>
+        {isEvaluating && (
+          <Box
+            sx={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 9999,
+
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+
+              px: 2,
+
+              bgcolor: "rgba(2, 6, 23, 0.92)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: 500,
+
+                bgcolor: "#FFFFFF",
+
+                borderRadius: 4,
+
+                p: {
+                  xs: 3,
+                  sm: 4,
+                },
+
+                textAlign: "center",
+
+                boxShadow:
+                  "0 30px 80px rgba(0,0,0,0.45)",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 68,
+                  height: 68,
+
+                  mx: "auto",
+                  mb: 2.5,
+
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+
+                  borderRadius: 3,
+                  bgcolor: "#EEF2FF",
+                }}
+              >
+                <CircularProgress size={32} />
+              </Box>
+
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: "1.4rem",
+                    sm: "1.65rem",
+                  },
+
+                  fontWeight: 800,
+                  color: "#0F172A",
+                }}
+              >
+                Analyzing your interview...
+              </Typography>
+
+              <Typography
+                sx={{
+                  mt: 1.5,
+
+                  color: "#64748B",
+                  lineHeight: 1.7,
+                }}
+              >
+                YourCareerForge is reviewing your answers
+                and preparing personalized feedback.
+              </Typography>
+
+              <LinearProgress
+                sx={{
+                  mt: 3,
+
+                  height: 7,
+                  borderRadius: 10,
+
+                  bgcolor: "#E2E8F0",
+
+                  "& .MuiLinearProgress-bar": {
+                    borderRadius: 10,
+
+                    background:
+                      "linear-gradient(90deg, #2563EB, #7C3AED)",
+                  },
+                }}
+              />
+
+              <Box
+                sx={{
+                  mt: 3,
+                  p: 2,
+
+                  bgcolor: "#F8FAFC",
+
+                  border: "1px solid #E2E8F0",
+                  borderRadius: 2.5,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#475569",
+                    fontWeight: 500,
+                  }}
+                >
+                  ✨ Reviewing communication, technical
+                  knowledge, confidence, and answer quality
+                </Typography>
+              </Box>
+
+              <Typography
+                variant="caption"
+                sx={{
+                  display: "block",
+                  mt: 2,
+                  color: "#94A3B8",
+                }}
+              >
+                Your results will appear automatically when
+                they&apos;re ready.
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Box>
     </Container>
   );
