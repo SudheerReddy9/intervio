@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 const RegisterPage = () => {
@@ -25,7 +25,8 @@ const RegisterPage = () => {
 
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo') || '/dashboard'
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
 
@@ -68,6 +69,7 @@ const RegisterPage = () => {
       });
 
       const data = await response.json();
+
 
       if (!response.ok) {
         setError(
@@ -138,7 +140,7 @@ const RegisterPage = () => {
 
       setOtpSent(false);
 
-      router.push("/dashboard");
+      router.push(returnTo);
     } catch (error) {
       console.error("Verify OTP error:", error);
 
@@ -449,7 +451,7 @@ const RegisterPage = () => {
 
           <Button
             component={Link}
-            href="/login"
+            href={`/login?returnTo=${encodeURIComponent(returnTo)}`}
             variant="text"
             sx={{
               minWidth: "auto",

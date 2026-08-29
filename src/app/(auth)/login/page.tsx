@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 const LoginPage = () => {
@@ -27,7 +27,8 @@ const LoginPage = () => {
   const [otpError, setOtpError] = useState("");
 
   const router = useRouter();
-
+  const searchParams = useSearchParams()
+  const returnTo = searchParams.get('returnTo') || '/dashboard';
   const handleSendOTP = async () => {
     if (!email.trim()) {
       setError("Please enter your email address.");
@@ -106,7 +107,7 @@ const LoginPage = () => {
       }
 
       setOtpSent(false);
-      router.push("/dashboard");
+      router.push(returnTo);
     } catch (error) {
       console.error("Verify OTP error:", error);
 

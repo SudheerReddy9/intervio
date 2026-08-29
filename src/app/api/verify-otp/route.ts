@@ -13,7 +13,9 @@ interface OTPRow extends RowDataPacket {
 }
 export async function POST(request: Request) {
     try {
+
         const { email, otp } = await request.json();
+
         if (!email || !otp) {
             return NextResponse.json({
                 success: false,
@@ -22,13 +24,14 @@ export async function POST(request: Request) {
                 { status: 400 }
             );
         }
+        const normalizedEmail = String(email).trim().toLowerCase();
         const [rows] = await db.execute<OTPRow[]>(
             `SELECT id, email, otp_hash, expires_at,
        attempt_count, purpose, name
 FROM otp_verifications
 WHERE email = ?
 LIMIT 1`,
-            [email]
+            [normalizedEmail]
         )
         if (rows.length === 0) {
             return NextResponse.json({
@@ -41,6 +44,10 @@ LIMIT 1`,
         const now = new Date();
         const expiresAt = new Date(otpRecord.expires_at)
         if (now > expiresAt) {
+            await db.execute(
+                `DELETE FROM otp_verifications where id = ?`,
+                [otpRecord.id]
+            )
             return NextResponse.json({
                 success: false,
                 message: 'Your OTP is expired. Please request new code.'
