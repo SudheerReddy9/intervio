@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { ResultSetHeader } from "mysql2";
+import { createHash, randomBytes } from "crypto";
 
 export async function POST(request: Request) {
 
@@ -24,14 +25,17 @@ export async function POST(request: Request) {
             );
 
         }
+        const claimToken = randomBytes(32).toString('hex');
+        const claimTokenHash = createHash('sha256').update(claimToken).digest('hex')
         const [results] = await db.execute<ResultSetHeader>(
             `INSERT INTO interviews
-    (questions, answers, status)
-    VALUES(?,?,?)`,
+    (questions, answers, status, claim_token_hash)
+    VALUES(?,?,?,?)`,
             [
                 JSON.stringify(questions),
                 JSON.stringify(answers),
-                'pending_evaluation'
+                'pending_evaluation',
+                claimTokenHash
             ],
         );
         const interviewId = results.insertId;
@@ -40,14 +44,21 @@ export async function POST(request: Request) {
         return NextResponse.json({
             success: true,
             message: "Interview data received successfully",
-            interviewId
+            interviewId,
+            claimToken
         })
-    } catch (error) {
-        console.error('Saving the data have field', error)
-        return NextResponse.json({
-            success: false,
-            message: 'Data cannot be saved'
-        },
+    }
+    catch (error: unknown) {
+        console.error("INTERVIEW SAVE ERROR:", error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : "Data cannot be saved",
+            },
             { status: 500 }
         );
     }

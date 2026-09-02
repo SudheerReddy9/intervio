@@ -19,6 +19,8 @@ const LogoutButton = () => {
                 return;
             }
 
+            window.dispatchEvent(new Event("auth-changed"));
+
             router.push("/login");
             router.refresh();
         } catch (error) {

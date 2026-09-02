@@ -10,11 +10,52 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const response = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const data = await response.json();
+
+        setIsAuthenticated(data.authenticated === true);
+      } catch (error) {
+        console.error(
+          "Header authentication check failed:",
+          error
+        );
+
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthentication();
+
+    window.addEventListener(
+      "auth-changed",
+      checkAuthentication
+    );
+
+    return () => {
+      window.removeEventListener(
+        "auth-changed",
+        checkAuthentication
+      );
+    };
+  }, []);
   return (
     <AppBar
       position="sticky"
@@ -120,45 +161,60 @@ const Header = () => {
             How It Works
           </Button>
 
-          <Button
-            component={Link}
-            href="/login"
-            sx={{
-              color: "#334155",
-              textTransform: "none",
-              fontWeight: 600,
-              px: 2,
-            }}
-          >
-            Sign In
-          </Button>
+          {isAuthenticated ? (
+            <Button
+              component={Link}
+              href="/dashboard"
+              variant="contained"
+              sx={{
+                ml: 1,
+                px: 2.75,
+                py: 1,
+                borderRadius: 2.5,
+                textTransform: "none",
+                fontWeight: 700,
+                boxShadow: "0 8px 20px rgba(37, 99, 235, 0.18)",
+              }}
+            >
+              Dashboard
+            </Button>
+          ) : (
+            <>
+              <Button
+                component={Link}
+                href="/login"
+                sx={{
+                  color: "#334155",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  px: 2,
+                }}
+              >
+                Sign In
+              </Button>
 
-          <Button
-            component={Link}
-            href="/register"
-            variant="contained"
-            sx={{
-              ml: 1,
+              <Button
+                component={Link}
+                href="/register"
+                variant="contained"
+                sx={{
+                  ml: 1,
+                  px: 2.75,
+                  py: 1,
+                  borderRadius: 2.5,
+                  textTransform: "none",
+                  fontWeight: 700,
+                  boxShadow: "0 8px 20px rgba(37, 99, 235, 0.18)",
 
-              px: 2.75,
-              py: 1,
-
-              borderRadius: 2.5,
-
-              textTransform: "none",
-              fontWeight: 700,
-
-              boxShadow:
-                "0 8px 20px rgba(37, 99, 235, 0.18)",
-
-              "&:hover": {
-                boxShadow:
-                  "0 10px 25px rgba(37, 99, 235, 0.24)",
-              },
-            }}
-          >
-            Get Started
-          </Button>
+                  "&:hover": {
+                    boxShadow: "0 10px 25px rgba(37, 99, 235, 0.24)",
+                  },
+                }}
+              >
+                Get Started
+              </Button>
+            </>
+          )}
         </Box>
 
         {/* MOBILE */}
@@ -172,22 +228,39 @@ const Header = () => {
             gap: 0.5,
           }}
         >
-          <Button
-            component={Link}
-            href="/login"
-            sx={{
-              display: {
-                xs: "none",
-                sm: "inline-flex",
-              },
-
-              textTransform: "none",
-              fontWeight: 600,
-              color: "#334155",
-            }}
-          >
-            Sign In
-          </Button>
+          {isAuthenticated ? (
+            <Button
+              component={Link}
+              href="/dashboard"
+              sx={{
+                display: {
+                  xs: "none",
+                  sm: "inline-flex",
+                },
+                textTransform: "none",
+                fontWeight: 600,
+                color: "#334155",
+              }}
+            >
+              Dashboard
+            </Button>
+          ) : (
+            <Button
+              component={Link}
+              href="/login"
+              sx={{
+                display: {
+                  xs: "none",
+                  sm: "inline-flex",
+                },
+                textTransform: "none",
+                fontWeight: 600,
+                color: "#334155",
+              }}
+            >
+              Sign In
+            </Button>
+          )}
 
           <IconButton
             aria-label="Open navigation"
