@@ -155,7 +155,7 @@ LIMIT 1`,
             expires: sessionExpiresAt,
         });
         return response;
-    } catch (error) {
+    } catch (error: unknown) {
         return NextResponse.json({
             success: false,
             message: 'Failed to verify code'

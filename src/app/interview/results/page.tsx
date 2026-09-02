@@ -50,26 +50,79 @@ export default function InterviewResultsPage() {
     useEffect(() => {
         const checkAuthentication = async () => {
             try {
-                const response = await fetch('/api/auth/me', {
-                    method: 'GET',
-                    credentials: 'include',
+                const response = await fetch("/api/auth/me", {
+                    method: "GET",
+                    credentials: "include",
                 });
+
                 if (!response.ok) {
                     setIsAuthenticated(false);
                     return;
                 }
-                const data = await response.json()
-                setIsAuthenticated(data.authenticated === true)
+
+                const data = await response.json();
+
+                if (data.authenticated !== true) {
+                    setIsAuthenticated(false);
+                    return;
+                }
+
+                setIsAuthenticated(true);
+
+                // User is authenticated.
+                // Check whether there is a guest interview waiting to be claimed.
+                const storedClaim =
+                    sessionStorage.getItem("interviewClaim");
+
+                if (!storedClaim) {
+                    return;
+                }
+
+                const { interviewId, claimToken } =
+                    JSON.parse(storedClaim);
+
+                const claimResponse = await fetch(
+                    "/api/interview/claim",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({
+                            interviewId,
+                            claimToken,
+                        }),
+                    }
+                );
+
+                const claimData = await claimResponse.json();
+
+                console.log("Interview claim response:", claimData);
+
+                if (!claimResponse.ok || !claimData.success) {
+                    console.error(
+                        "Interview could not be claimed:",
+                        claimData.message
+                    );
+                    return;
+                }
+
+                sessionStorage.removeItem("interviewClaim");
+
+                console.log("Interview claimed successfully");
             } catch (error) {
                 console.error(
-                    'Failed to check authentication',
+                    "Failed to check authentication or claim interview",
                     error
                 );
-                setIsAuthenticated(false)
+
+                setIsAuthenticated(false);
             }
-        }
+        };
+
         checkAuthentication();
-    }, [])
+    }, []);
     const storedFeedback = useSyncExternalStore(
         () => () => { },
         () => sessionStorage.getItem("interviewFeedback"),
