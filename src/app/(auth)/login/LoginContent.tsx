@@ -107,6 +107,7 @@ const LoginContent = () => {
       }
 
       setOtpSent(false);
+      window.dispatchEvent(new Event("auth-changed"));
       router.push(returnTo);
     } catch (error) {
       console.error("Verify OTP error:", error);
