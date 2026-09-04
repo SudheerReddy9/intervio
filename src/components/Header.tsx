@@ -31,29 +31,21 @@ const Header = () => {
 
         const data = await response.json();
 
+        console.log("HEADER AUTH:", data);
+
         setIsAuthenticated(data.authenticated === true);
       } catch (error) {
-        console.error(
-          "Header authentication check failed:",
-          error
-        );
-
+        console.error("Header authentication check failed:", error);
         setIsAuthenticated(false);
       }
     };
 
     checkAuthentication();
 
-    window.addEventListener(
-      "auth-changed",
-      checkAuthentication
-    );
+    window.addEventListener("auth-changed", checkAuthentication);
 
     return () => {
-      window.removeEventListener(
-        "auth-changed",
-        checkAuthentication
-      );
+      window.removeEventListener("auth-changed", checkAuthentication);
     };
   }, []);
   return (
