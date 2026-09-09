@@ -31,13 +31,20 @@ const DashboardPage = async () => {
     }
     const [interviews] = await db.execute<InterviewRow[]>(
         `
-        SELECT id, feedback, created_at
-        FROM interviews
-        WHERE user_id = ?
-          AND status = 'completed'
-          AND feedback IS NOT NULL
-        ORDER BY created_at DESC
-        LIMIT 10
+    SELECT
+        id,
+        feedback,
+        created_at,
+        ROW_NUMBER() OVER (
+            PARTITION BY user_id
+            ORDER BY created_at ASC, id ASC
+        ) AS interviewNumber
+    FROM interviews
+    WHERE user_id = ?
+      AND status = 'completed'
+      AND feedback IS NOT NULL
+    ORDER BY created_at DESC
+    LIMIT 10
     `,
         [user.id]
     );
