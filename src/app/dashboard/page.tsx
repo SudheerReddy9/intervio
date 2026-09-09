@@ -6,6 +6,7 @@ import db from "@/lib/db";
 import type { RowDataPacket } from "mysql2";
 import LogoutButton from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
+import Link from "next/link";
 interface InterviewFeedback {
     overallScore: number;
     communication: number;
@@ -18,6 +19,7 @@ interface InterviewFeedback {
 }
 interface InterviewRow extends RowDataPacket {
     id: number;
+    interviewNumber: number;
     feedback: InterviewFeedback;
     created_at: Date;
 }
@@ -139,12 +141,26 @@ const DashboardPage = async () => {
                             }}
                         >
                             <Box>
-                                <Typography
-                                    variant="h6"
-                                    sx={{ fontWeight: 700 }}
+                                <Link
+                                    href={`/dashboard/interviews/${interview.id}`}
+                                    style={{
+                                        textDecoration: "none",
+                                        color: "inherit",
+                                    }}
                                 >
-                                    Interview #{interview.id}
-                                </Typography>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: 700,
+                                            "&:hover": {
+                                                color: "primary.main",
+                                                textDecoration: "underline",
+                                            },
+                                        }}
+                                    >
+                                        Interview #{interview.interviewNumber}
+                                    </Typography>
+                                </Link>
 
                                 <Typography
                                     variant="body2"
@@ -266,6 +282,54 @@ const DashboardPage = async () => {
                                     }}
                                 >
                                     {interview.feedback.confidence}%
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: 2,
+                                    bgcolor: "background.default",
+                                }}
+                            >
+                                <Typography
+                                    variant="h6"
+                                    color="text.secondary"
+                                >
+                                    Strengths
+                                </Typography>
+
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        mt: 1,
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    {interview.feedback.strengths}
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: 2,
+                                    bgcolor: "background.default",
+                                }}
+                            >
+                                <Typography
+                                    variant="h6"
+                                    color="text.secondary"
+                                >
+                                    Improvements
+                                </Typography>
+
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        mt: 1,
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    {interview.feedback.improvements}
                                 </Typography>
                             </Box>
                         </Box>
