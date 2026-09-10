@@ -29,24 +29,24 @@ const SpeechRecorder: React.FC<SpeechRecorderProps> = ({
     clearTranscript,
   } = useSpeechRecognition();
 
-  /*
-   * Send transcript back to InterviewPage
-   */
   useEffect(() => {
     onTranscriptChange(transcript);
   }, [transcript, onTranscriptChange]);
 
-  /*
-   * Clear transcript when question changes
-   */
   useEffect(() => {
     clearTranscript();
   }, [clearTranscript, questionId]);
 
   const handleMicrophone = () => {
+    console.log("Mic button clicked", {
+      isListening,
+    });
+
     if (isListening) {
+      console.log("STOP requested");
       stopListening();
     } else {
+      console.log("START requested");
       startListening();
     }
   };
